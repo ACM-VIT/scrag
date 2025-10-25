@@ -6,13 +6,13 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional
 
-from core.extractors import ExtractionContext, ExtractionResult, build_extractors
-from core.processors import ProcessingContext, ProcessingResult, build_processors
-from core.storage import StorageContext, StorageResult, build_storage
-from core.utils import ScragConfig
+from scrag.core.extractors import ExtractionContext, ExtractionResult, build_extractors
+from scrag.core.processors import ProcessingContext, ProcessingResult, build_processors
+from scrag.core.storage import StorageContext, StorageResult, build_storage
+from scrag.core.utils import ScragConfig
 
 
-@dataclass(slots=True)
+@dataclass
 class PipelineRunResult:
     """Bundle processing artifacts returned to the CLI."""
 

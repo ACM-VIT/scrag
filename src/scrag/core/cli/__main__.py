@@ -1,6 +1,6 @@
-"""Module entrypoint for `python -m core.cli`."""
+"""Module entrypoint for `python -m scrag.core.cli`."""
 
-from core.cli import main
+from scrag.core.cli import main
 
 
 if __name__ == "__main__":

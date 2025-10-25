@@ -46,3 +46,8 @@ class NoOpRAGComponent(BaseRAGComponent):
         """Return a success result with untouched metadata."""
 
         return RAGResult(success=True, metadata={"component": self.name, **context.metadata})
+
+
+# Import submodules for convenience
+from . import embedders, stores
+from .query import QueryProcessor, RAGQueryManager

@@ -64,7 +64,14 @@ def _normalize_whitespace(text: str) -> str:
 PROCESSOR_REGISTRY = {
     "normalize_whitespace": NormalizeWhitespaceProcessor,
     "simple": NormalizeWhitespaceProcessor,
+    "chunking": lambda **kwargs: _import_chunking_processor(**kwargs),
 }
+
+
+def _import_chunking_processor(**kwargs):
+    """Lazy import ChunkingProcessor to avoid circular imports."""
+    from .chunking import ChunkingProcessor
+    return ChunkingProcessor(**kwargs)
 
 
 def build_processors(names: Iterable[str], *, options: Dict[str, Dict] | None = None) -> List[BaseProcessor]:
@@ -75,7 +82,8 @@ def build_processors(names: Iterable[str], *, options: Dict[str, Dict] | None = 
         if not cls:
             continue
         kwargs = options.get(name, {})
-        processors.append(cls(**kwargs))
+        if callable(cls):
+            processors.append(cls(**kwargs))
     return processors
 
 

@@ -9,6 +9,7 @@ from .base import (
     build_processors,
     PROCESSOR_REGISTRY,
 )
+from .chunking import ChunkingProcessor
 
 __all__ = [
     "BaseProcessor",
@@ -16,6 +17,7 @@ __all__ = [
     "ProcessingResult",
     "SimpleProcessor",
     "NormalizeWhitespaceProcessor",
+    "ChunkingProcessor",
     "PROCESSOR_REGISTRY",
     "build_processors",
 ]

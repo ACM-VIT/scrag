@@ -17,6 +17,51 @@ pipeline:
     options:
       directory: data
       format: json
+  # RAG Pipeline configuration
+  rag_pipeline:
+    enabled: false
+    stages:
+      - chunking
+      - embed
+      - index
+    chunk_processor: chunking
+    embed_stage: embed
+    index_stage: index
 rag:
-  chunk_size: 512
-  overlap: 64
+  # Content chunking settings
+  chunking:
+    chunk_size: 512
+    chunk_overlap: 50
+    preserve_sentences: true
+    min_chunk_size: 50
+  
+  # Embedding model configuration
+  embeddings:
+    default_model: sentence-transformer
+    models:
+      sentence-transformer:
+        model_name: "all-MiniLM-L6-v2"
+        device: cpu
+        cache_folder: null
+      openai:
+        model_name: "text-embedding-3-small"
+        api_key: null  # Set OPENAI_API_KEY environment variable
+        batch_size: 100
+  
+  # Index storage configuration
+  storage:
+    default_backend: file
+    backends:
+      file:
+        base_path: "data/indices"
+        create_if_missing: true
+      memory:
+        # In-memory storage for testing
+        enabled: false
+  
+  # Query and retrieval settings
+  retrieval:
+    default_top_k: 10
+    default_threshold: 0.0
+    include_scores: true
+    max_results: 100

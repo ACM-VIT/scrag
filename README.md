@@ -70,6 +70,10 @@ scrag/
 │   ├── api/                  # API reference
 │   ├── guides/               # User guides
 │   └── tutorials/            # Step-by-step tutorials
+├── research/                 # Research & architectural decisions
+│   ├── spikes/               # Discovery and research spikes
+│   ├── decisions/            # Architecture Decision Records (ADRs)
+│   └── epics/                # Epic planning and documentation
 ├── config/                   # Configuration files
 │   ├── extractors/           # Extractor configurations
 │   └── rag/                  # RAG pipeline configurations
@@ -89,6 +93,33 @@ For detailed architecture information, see [ARCHITECTURE.md](ARCHITECTURE.md).
 - Universal RAG Builder: auto‑discover top results for a query, scrape them, and build a ready‑to‑use RAG index.  
 - Web UI: a lightweight interface for users who prefer a visual workflow.  
 - Export adapters: convenient formats for popular vector DBs and RAG frameworks.  
+
+### Current Release (v1.0)
+-  Multi-strategy extraction: newspaper3k, readability-lxml, and BeautifulSoup-based heuristics
+-  Metadata capture: title, author, and date when available
+-  CLI interface with configuration management
+-  Extensible pipeline architecture
+
+### Universal RAG Builder (v2.0) - In Planning
+Split into two focused EPICs for better implementation:
+
+**EPIC 1: Web Crawling & Discovery System**
+- Discovery Query: Convert user intent to search strategies
+- Search Integration: Web search APIs, RSS feeds, sitemap discovery
+- Intelligent Fetching: Rate limiting, retry logic, content deduplication
+- CrawlManager: Robust error handling and job orchestration
+
+**EPIC 2: RAG Index Construction**
+- Multi-model Embeddings: Support for various embedding models
+- Flexible Storage: Abstract IndexStore interface for different backends
+- Optimized Retrieval: Fast semantic search and query capabilities
+- Content Chunking: RAG-optimized text segmentation
+
+
+### Documentation & Research
+-  `/research/` directory: Maintains architectural decisions, spikes, and institutional knowledge
+-  Spike-driven development: Thorough research before implementation
+-  Comprehensive issue templates: Clear Definition of Done for all tasks  
 
 ---
 
