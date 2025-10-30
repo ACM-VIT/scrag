@@ -7,6 +7,8 @@ from typing import Any, Dict, Optional
 import requests
 
 from .base import BaseExtractor, ExtractionContext, ExtractionResult
+from ..utils.utils import parse_html_content
+from ..utils.headers import normalize_headers, get_header_value
 
 try:
     from readability import Document
@@ -42,6 +44,9 @@ class ReadabilityExtractor(BaseExtractor):
         if not html_to_parse and url_to_use:
             headers = {"User-Agent": self._user_agent}
             headers.update(context.metadata.get("headers", {}))
+            
+            # Normalize headers for case-insensitive handling
+            headers = normalize_headers(headers)
             timeout = context.metadata.get("timeout", self._timeout)
 
             try:
@@ -71,7 +76,6 @@ class ReadabilityExtractor(BaseExtractor):
 
 
 def _strip_html(html: str) -> str:
-    from bs4 import BeautifulSoup
-
-    soup = BeautifulSoup(html, "html.parser")
-    return "\n".join(segment for segment in soup.stripped_strings)
+    """Strip HTML tags and return clean text content."""
+    content, _ = parse_html_content(html, "readability", 200)
+    return content

@@ -39,6 +39,36 @@ class DummyStorage:
         return SimpleNamespace(success=True, metadata=context.metadata, path=None)
 
 
+class ShortExtractor:
+    name = "short"
+
+    def supports(self, context):
+        return True
+
+    def extract(self, context):
+        return SimpleNamespace(content="brief", metadata={"extractor": self.name}, succeeded=True)
+
+
+class LongExtractor:
+    name = "long"
+
+    def supports(self, context):
+        return True
+
+    def extract(self, context):
+        return SimpleNamespace(content="l" * 500, metadata={"extractor": self.name}, succeeded=True)
+
+
+class TinyExtractor:
+    name = "tiny"
+
+    def supports(self, context):
+        return True
+
+    def extract(self, context):
+        return SimpleNamespace(content="tiny", metadata={"extractor": self.name}, succeeded=True)
+
+
 @pytest.fixture(autouse=True)
 def patch_components(monkeypatch):
     monkeypatch.setattr("core.pipeline.build_extractors", lambda names, options=None: [DummyExtractor()])
@@ -70,24 +100,6 @@ def test_pipeline_runner_invokes_all_stages(tmp_path: Path) -> None:
 
 
 def test_pipeline_runner_skips_short_content(monkeypatch: pytest.MonkeyPatch) -> None:
-    class ShortExtractor:
-        name = "short"
-
-        def supports(self, context):
-            return True
-
-        def extract(self, context):
-            return SimpleNamespace(content="brief", metadata={"extractor": self.name}, succeeded=True)
-
-    class LongExtractor:
-        name = "long"
-
-        def supports(self, context):
-            return True
-
-        def extract(self, context):
-            return SimpleNamespace(content="l" * 500, metadata={"extractor": self.name}, succeeded=True)
-
     monkeypatch.setattr(
         "core.pipeline.build_extractors",
         lambda names, options=None: [ShortExtractor(), LongExtractor()],
@@ -114,18 +126,9 @@ def test_pipeline_runner_skips_short_content(monkeypatch: pytest.MonkeyPatch) ->
 
 
 def test_pipeline_runner_returns_partial_when_all_short(monkeypatch: pytest.MonkeyPatch) -> None:
-    class ShortExtractor:
-        name = "short"
-
-        def supports(self, context):
-            return True
-
-        def extract(self, context):
-            return SimpleNamespace(content="tiny", metadata={"extractor": self.name}, succeeded=True)
-
     monkeypatch.setattr(
         "core.pipeline.build_extractors",
-        lambda names, options=None: [ShortExtractor()],
+        lambda names, options=None: [TinyExtractor()],
     )
 
     config = ScragConfig(
