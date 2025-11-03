@@ -7,7 +7,7 @@ This document tracks the current contributor workflow for Scrag. It assumes you 
 - Python 3.13 (matches `pyproject.toml`)
 - [uv](https://docs.astral.sh/uv/) 0.4+ (manages virtualenvs and dependency resolution)
 - Git
-- Optional: Node.js 20+ if you plan to work on the Next.js frontend in `src/scrag/web`
+- Optional: Node.js 20+ if you plan to work on the Next.js frontend in `src/web`
 
 ## Environment Setup
 
