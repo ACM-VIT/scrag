@@ -108,7 +108,7 @@ Command-line interface for easy usage:
 - Facade Pattern for simplified interface
 - Observer Pattern for progress reporting
 
-### 6. Web Interface (`src/scrag/web/`)
+### 6. Web Interface (`src/web/`)
 
 Web-based interface for visual interaction:
 

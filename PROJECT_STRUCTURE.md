@@ -19,7 +19,7 @@ scrag/
 │   ├── storage/                     # Storage backends and adapters
 │   ├── rag/                         # RAG pipeline components
 │   ├── cli/                         # Command-line interface
-│   ├── web/                         # Web interface (future)
+│   ├── web/                         # Web interface
 │   └── utils/                       # Utility functions and helpers
 │
 ├── tests/                           # Comprehensive test suite

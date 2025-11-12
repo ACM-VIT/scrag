@@ -60,7 +60,7 @@ scrag/
 │   ├── storage/              # Storage backends and adapters
 │   ├── rag/                  # RAG pipeline components
 │   ├── cli/                  # Command-line interface
-│   ├── web/                  # Web interface (planned)
+│   ├── web/                  # Web interface
 │   └── utils/                # Utility functions
 ├── tests/                    # Comprehensive test suite
 │   ├── unit/                 # Unit tests
