@@ -36,6 +36,7 @@ class PipelineRunner:
         output: Optional[Path] = None,
         storage_format: Optional[str] = None,
         min_content_length_override: Optional[int] = None,
+        bypass_cache: bool = False,
     ) -> PipelineRunResult:
         pipeline_cfg = self._config.data.get("pipeline", {})
         extractors_cfg = pipeline_cfg.get("extractors", [])
@@ -57,6 +58,18 @@ class PipelineRunner:
                 options["user_agent"] = scraping_cfg["user_agent"]
             if "timeout" not in options and scraping_cfg.get("request_timeout"):
                 options["timeout"] = scraping_cfg["request_timeout"]
+            
+            # Add cache settings for HTTP extractors
+            if name in ("http", "simple", "async_http", "async"):
+                cache_cfg = scraping_cfg.get("cache", {})
+                if "enable_cache" not in options:
+                    options["enable_cache"] = cache_cfg.get("enabled", True)
+                if "cache_max_age" not in options:
+                    options["cache_max_age"] = cache_cfg.get("max_age", 3600)
+                if "cache_dir" not in options and cache_cfg.get("directory"):
+                    from pathlib import Path
+                    options["cache_dir"] = Path(cache_cfg["directory"])
+            
             return options
 
         extractor_instances = build_extractors(
@@ -71,6 +84,7 @@ class PipelineRunner:
             url=url,
             scraping_cfg=scraping_cfg,
             min_content_length=minimum_content_length,
+            bypass_cache=bypass_cache,
         )
 
         processor_instances = build_processors(
@@ -103,11 +117,13 @@ class PipelineRunner:
         url: str,
         scraping_cfg: Dict[str, Any],
         min_content_length: int,
+        bypass_cache: bool = False,
     ) -> ExtractionResult:
         context_metadata = {
             "headers": {"User-Agent": scraping_cfg.get("user_agent", "ScragBot/0.1")},
             "timeout": scraping_cfg.get("request_timeout", 10),
             "url": url,
+            "bypass_cache": bypass_cache,
         }
         context = ExtractionContext(url=url, metadata=context_metadata)
         failure_reason: Optional[str] = None

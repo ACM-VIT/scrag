@@ -11,6 +11,7 @@ import tomllib
 
 import typer
 
+from scrag.core import __version__
 from scrag.core.utils import ScragConfig, load_config
 from scrag.core.extractors import (
     get_available_extractors,
@@ -146,30 +147,10 @@ def extract(
         "--async",
         help="[EXPERIMENTAL] Enable async extraction for improved throughput with batch processing.",
     ),
-    use_selenium: bool = typer.Option(
+    no_cache: bool = typer.Option(
         False,
-        "--selenium",
-        help="Use Selenium for JavaScript-heavy pages (requires 'pip install scrag[web-render]').",
-    ),
-    use_playwright: bool = typer.Option(
-        False,
-        "--playwright",
-        help="Use Playwright for JavaScript-heavy pages (requires 'pip install scrag[web-render]').",
-    ),
-    browser: str = typer.Option(
-        "chrome",
-        "--browser",
-        help="Browser to use for web rendering (chrome, firefox, chromium, webkit).",
-    ),
-    headless: bool = typer.Option(
-        True,
-        "--headless/--no-headless",
-        help="Run browser in headless mode.",
-    ),
-    timeout: int = typer.Option(
-        30,
-        "--timeout",
-        help="Page load timeout in seconds for web rendering.",
+        "--no-cache",
+        help="Disable HTTP caching for this run.",
     ),
 ) -> None:
     """Execute the configured extraction pipeline for the provided URL."""
@@ -241,6 +222,7 @@ def extract(
         output=normalized_output,
         storage_format=output_format,
         min_content_length_override=min_length,
+        bypass_cache=no_cache,
     )
     
     if use_async:
@@ -260,6 +242,40 @@ def extract(
     if warnings:
         for warning in warnings:
             typer.echo(f"  warning: {warning}")
+
+
+@app.command()
+def cache(
+    action: str = typer.Argument(..., help="Cache action: 'info', 'clear'"),
+    config_dir: Optional[Path] = typer.Option(None, help="Configuration directory location."),
+    environment: Optional[str] = typer.Option(None, help="Configuration environment name."),
+) -> None:
+    """Manage HTTP cache."""
+    from ..utils.cache import HttpCache
+    
+    config = _resolve_config(config_dir=config_dir, environment=environment)
+    scraping_cfg = config.data.get("scraping", {})
+    cache_cfg = scraping_cfg.get("cache", {})
+    
+    cache_dir = None
+    if cache_cfg.get("directory"):
+        cache_dir = Path(cache_cfg["directory"])
+    
+    cache = HttpCache(cache_dir=cache_dir, max_age=cache_cfg.get("max_age", 3600))
+    
+    if action == "info":
+        info = cache.get_cache_info()
+        typer.echo("Cache Information:")
+        typer.echo(f"  Directory: {info['cache_dir']}")
+        typer.echo(f"  Entries: {info['entries']}")
+        typer.echo(f"  Size: {info['size_bytes']:,} bytes")
+    elif action == "clear":
+        cache.clear()
+        typer.echo("Cache cleared successfully.")
+    else:
+        typer.echo(f"Unknown action: {action}")
+        typer.echo("Available actions: info, clear")
+        raise typer.Exit(1)
 
 
 @app.command()

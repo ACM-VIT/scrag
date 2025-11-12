@@ -4,6 +4,10 @@ logging:
 scraping:
   user_agent: "scragBot/0.1"
   request_timeout: 10
+  cache:
+    enabled: true
+    max_age: 3600  # 1 hour in seconds
+    directory: null  # null means use default ~/.scrag/cache
 pipeline:
   extractors:
     - newspaper
